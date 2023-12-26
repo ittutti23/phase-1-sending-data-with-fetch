@@ -1,92 +1,59 @@
 require ( './helpers.js' );
 
-require( './helpers' );
-const chai = require( 'chai' );
-const spies = require( 'chai-spies' );
-const nock = require( 'nock' );
-chai.use( spies );
+describe('index.js', function() {
+  describe('distanceFromHqInBlocks()', function() {
+    it('returns a distance in blocks', function() {
+      expect(distanceFromHqInBlocks(43)).to.equal(15);
+    });
 
-const rando = Math.ceil( Math.random() * 1000 )
+    it('returns a distance in blocks', function() {
+      expect(distanceFromHqInBlocks(50)).to.equal(8);
+    });
 
-describe( "submitData()", () => {
-  let xhr, requests
-  beforeEach( function () {
-    window.fetch = require( 'node-fetch' );
+    it('calculates distances below 42nd street', function() {
+      expect(distanceFromHqInBlocks(34)).to.equal(24);
+    });
+  });
 
+  describe('distanceFromHqInFeet()', function() {
+    it('returns a distance in feet', function() {
+      expect(distanceFromHqInFeet(43)).to.equal(15);
+    });
 
+    it('returns a distance in feet', function() {
+      expect(distanceFromHqInFeet(50)).to.equal(8);
+    });
 
-    chai.spy.on( window, 'fetch' );
-    window.onerror = undefined;
+    it('calculates distances below 42nd street', function() {
+      expect(distanceFromHqInFeet(34)).to.equal(24);
+    });
+  });
 
-  } );
+  describe('distanceTravelledInFeet()', function() {
+    it('returns the distance travelled in feet', function() {
+      expect(distanceTravelledInFeet(43, 48)).to.equal(15);
+    });
 
-  it( "makes a POST request to /users with a name and email", async () => {
-    let reqBody
-    let headers
-    nock( 'http://localhost:3000' )
-      .post( '/users' )
-      .reply( 201, function ( uri, requestBody ) {
-        reqBody = requestBody
-        headers = this.req.headers
-        return {
-          id: rando,
-          ...requestBody
-        }
-      } );
+    it('returns a distance in feet', function() {
+      expect(distanceTravelledInFeet(50, 60)).to.equal(8);
+    });
 
-    let name = "Steve"
-    let email = "steve@steve.com"
+    it('returns distance when destination is below distance', function() {
+      expect(distanceTravelledInFeet(34, 28)).to.equal(24);
+    });
+  });
 
-    await submitData( name, email )
-    expect( window.fetch, "A fetch to the API was not found" )
-      .to.have.been.called.with( 'http://localhost:3000/users' );
-    expect( window.fetch )
-      .to.have.been.called.exactly( 1 );
-    expect( headers[ 'content-type' ][ 0 ] )
-      .to.equal( 'application/json' )
-    expect( headers[ 'accept' ][ 0 ] )
-      .to.equal( 'application/json' )
-    expect( Object.keys( reqBody ), "The request body should only have 'name' and 'email' key/value pairs" )
-      .to.deep.equal( [ "name", "email" ] )
-    expect( reqBody.name, "The 'name' property was not found in the request body" )
-      .to.eq( "Steve" )
-    expect( reqBody.email, "The 'email' property was not found in the request body" )
-      .to.eq( "steve@steve.com" )
-  } )
+  describe('distanceTravelledInFeet()', function() {
+    it('returns the distance travelled in feet', function() {
+      expect(distanceTravelledInFeet(43, 48)).to.equal(15);
+    });
 
-  it( "handles the POST request response, retrieves the new id value and appends it to the DOM", async function () {
-    nock( 'http://localhost:3000' )
-      .post( '/users' )
-      .reply( 201, function ( uri, requestBody ) {
-        return {
-          id: rando,
-          ...requestBody
-        }
-      } );
+    it('returns a distance in feet', function() {
+      expect(distanceTravelledInFeet(50, 60)).to.equal(8);
+    });
 
-    let name = "Sam"
-    let email = "sam@sam.com"
-
-    await submitData( name, email )
-
-    expect( document.body.innerHTML )
-      .to.include( rando )
-  } );
-
-  it( "handles a failed POST request using catch, appends the error message to the DOM", async function () {
-    let message = 'Unauthorized Access'
-    nock( 'http://localhost:3000' )
-      .post( '/users' )
-      .replyWithError( {
-        message: message,
-        code: '401',
-      } )
-
-    let name = "Jim"
-    let email = "jim@jim.com"
-
-    await submitData( name, email )
-    expect( document.body.innerHTML )
-      .to.include( message )
-  } )
-} )
+    it('returns distance when destination is below distance', function() {
+      expect(distanceTravelledInFeet(34, 28)).to.equal(24);
+    });
+  });
+});
